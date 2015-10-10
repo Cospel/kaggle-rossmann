@@ -22,7 +22,7 @@ hdf = HDFStore(data_dir + 'data.h5')
 data_train = hdf['data_train']
 data_test = hdf['data_test']
 data_test.sort_index(by=['Id'],ascending=[True])
-(DataTr, DataTe) = train_test_split(data_train,0.00)
+(DataTr, DataTe) = train_test_split(data_train,0.01)
 
 in_neurons = 9
 hidden_neurons = 450

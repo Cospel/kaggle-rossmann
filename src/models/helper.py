@@ -59,13 +59,13 @@ def get_data_sequence(datam, n_prev=1):
     lendata = len(datam)
     if n_prev == 0:
         for i in xrange(lendata-n_prev):
-            print(str(i)+'/'+str(lendata))
+            #print(str(i)+'/'+str(lendata))
             # this is simple data for non rnn models
             docX.append(datam[columns].iloc[i].as_matrix())
             docY.append(datam['Sales'].iloc[i])
     else:
         for i in xrange(lendata-n_prev):
-            print(str(i)+'/'+str(lendata))
+            #print(str(i)+'/'+str(lendata))
             # this are data sequences for rnn models
             docX.append(datam[columns].iloc[i:i+n_prev].as_matrix())
             docY.append(datam['Sales'].iloc[i+n_prev])
@@ -81,12 +81,12 @@ def get_test_data_sequence(datam, n_prev=1):
     lendata = len(datam)
     if n_prev == 0:
         for i in xrange(lendata-n_prev):
-            print(str(i)+'/'+str(lendata))
+            #print(str(i)+'/'+str(lendata))
             # this is simple data for non rnn models
             docX.append(datam[columns].iloc[i].as_matrix())
     else:
         for i in xrange(lendata-n_prev):
-            print(str(i)+'/'+str(lendata))
+            #print(str(i)+'/'+str(lendata))
             # this are data sequences for rnn models
             docX.append(datam[columns].iloc[i:i+n_prev].as_matrix())
     return docX
