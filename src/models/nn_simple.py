@@ -22,10 +22,10 @@ hdf = HDFStore(data_dir + 'data.h5')
 data_train = hdf['data_train']
 data_test = hdf['data_test']
 data_test.sort_index(by=['Id'],ascending=[True])
-(DataTr, DataTe) = train_test_split(data_train,0.99)
+(DataTr, DataTe) = train_test_split(data_train,0.00)
 
 in_neurons = 9
-hidden_neurons = 450
+hidden_neurons = 500
 out_neurons = 1
 nb_epoch = 10
 evaluation = []
@@ -41,9 +41,9 @@ print ('Getting data ...')
 X_train, Y_train = get_training_dataset_simple(DataTr)
 
 print ('Fitting model ...')
-for k in range(3):
+for k in range(15):
     print(k)
-    model.fit(X_train, Y_train, validation_split=0.0, batch_size=15,shuffle=True,nb_epoch=nb_epoch,verbose=2)
+    model.fit(X_train, Y_train, validation_split=0.05, batch_size=15,shuffle=True,nb_epoch=nb_epoch,verbose=2)
     print model.predict(X_train)
 
 print ('Evaluating test ...')
