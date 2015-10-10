@@ -13,6 +13,9 @@ https://www.kaggle.com/c/rossmann-store-sales
 
 # folders
 /data            : datasets
+
 /src/data        : handling dataset, missing values mostly with pandas
+
 /src/models      : models for prediction
+
 /src/eval        : evaluations
