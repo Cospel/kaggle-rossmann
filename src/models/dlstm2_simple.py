@@ -75,7 +75,7 @@ def train_test_split(df, test_size=0.1):
 print('Loading data ...')
 data_dir = '../../data/'
 hdf = HDFStore(data_dir + 'data.h5')
-data_train = hdf['slepemapy']
+data_train = hdf['data_train']
 
 (DataTr, DataTe) = train_test_split(data_train,0.01)
 
@@ -86,7 +86,6 @@ hidden_neurons_3 = 1050
 out_neurons = 65
 nb_epoch = 10
 evaluation = []
-
 
 print ('Creating 2DLSTM ...')
 model = Sequential()
