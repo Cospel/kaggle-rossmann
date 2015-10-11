@@ -1,9 +1,10 @@
-# kaggle-rossmann by Cospel
+# kaggle-rossmann competition
 Prediction model for Kaggle/Rossmann competition.
 Contact me on my linkedin if you need more information.
 
 You can find out more about this competition at:
 https://www.kaggle.com/c/rossmann-store-sales
+https://www.kaggle.com/
 
 # steps
 0. clone repo
