@@ -25,7 +25,7 @@ data_test.sort_index(by=['Id'],ascending=[True])
 (DataTr, DataTe) = train_test_split(data_train,0.00)
 
 in_neurons = 9
-hidden_neurons = 500
+hidden_neurons = 100
 out_neurons = 1
 nb_epoch = 10
 evaluation = []
@@ -41,7 +41,7 @@ print ('Getting data ...')
 X_train, Y_train = get_training_dataset_simple(DataTr)
 
 print ('Fitting model ...')
-for k in range(15):
+for k in range(3):
     print(k)
     model.fit(X_train, Y_train, validation_split=0.05, batch_size=15,shuffle=True,nb_epoch=nb_epoch,verbose=2)
     print model.predict(X_train)
@@ -50,5 +50,5 @@ print ('Evaluating test ...')
 X_train, Y_train = None, None
 X_test = get_test_dataset_simple(data_test)
 predicted_values = model.predict(X_test)
-data_result = pd.DataFrame({'Sales': predicted_values.flatten(), 'Id': data_test['Id'].tolist()})
+data_result = pd.DataFrame({'Sales': predicted_values.astype(int).flatten(), 'Id': data_test['Id'].tolist()})
 store_results(data_result, 'test_output.csv')
