@@ -5,7 +5,7 @@
 from pandas import HDFStore
 import pandas as pd
 import numpy as np
-
+from math import ceil
 
 def load_data_file(filename,dtypes,parsedate = True):
     date_parse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d')
@@ -13,6 +13,17 @@ def load_data_file(filename,dtypes,parsedate = True):
         return pd.read_csv(filename, sep=',', parse_dates=['Date'], date_parser= date_parse,dtype=dtypes)
     else:
         return pd.read_csv(filename, sep=',', dtype=dtypes)
+
+def week_of_month(dt):
+    """ Returns the week of the month for the specified date.
+    """
+
+    first_day = dt.replace(day=1)
+
+    dom = dt.day
+    adjusted_dom = dom + first_day.weekday()
+
+    return int(ceil(adjusted_dom/7.0))
 
 def replace_values(dataframe, column, dictionary):
     return dataframe[column].apply( lambda x: int(dictionary[x]) )
@@ -69,15 +80,17 @@ print('Add some more features ...')
 # we have dayofweek already
 data_train['Year'] = data_train['Date'].apply(lambda x: int(str(x)[:4]))
 data_train['Month'] = data_train['Date'].apply(lambda x: int(str(x)[5:7]))
+data_train['WeekOfMonth'] = data_train['Date'].apply(lambda x: int(week_of_month(x)))
 data_test['Year'] = data_test['Date'].apply(lambda x: int(str(x)[:4]))
 data_test['Month'] = data_test['Date'].apply(lambda x: int(str(x)[5:7]))
+data_test['WeekOfMonth'] = data_test['Date'].apply(lambda x: int(week_of_month(x)))
 
 print('Create ultimate data')
 # this is concatenating datasets including info from stores
 data_ut_train = pd.merge(data_train,data_store, on='Store')
 data_ut_test  = pd.merge(data_test,data_store, on='Store')
 
-print data_ut_train[0:2]
+print data_ut_train[0:1]
 print ('...')
 
 assert( len( data_ut_train ) == len( data_train ))
