@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import random
 
-columns = ['Store', 'DayOfWeek', 'Open', 'Promo', 'StateHoliday', 'SchoolHoliday', 'Month', 'Assortment', 'StoreType', 'WeekOfMonth']
+columns = ['Store', 'DayOfWeek', 'Open', 'Promo', 'StateHoliday', 'SchoolHoliday', 'Month', 'Assortment', 'StoreType', 'WeekOfMonth','Year']
 
 def get_training_dataset_simple(datam):
     """

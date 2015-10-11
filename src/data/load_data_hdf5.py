@@ -32,6 +32,7 @@ def replace_values(dataframe, column, dictionary):
 StateHoliday = {'a': 1, 'b': 2, 'c': 3, '0': 0, 0: 0}
 Assortment = {'a': 0, 'b': 1, 'c': 2}
 StoreType = {'a': 0,'b': 1,'c': 2, 'd': 3}
+Year = { '2013': 1, '2014': 2, '2015': 3 }
 
 # Load data, parse data, clean unwanted columns, replace nan values, create column
 print('Loading data ...')
@@ -78,12 +79,17 @@ data_test['Open'] = data_test['Open'].astype(np.int8)
 
 print('Add some more features ...')
 # we have dayofweek already
-data_train['Year'] = data_train['Date'].apply(lambda x: int(str(x)[:4]))
+data_train['Year'] = data_train['Date'].apply(lambda x: str(x)[:4])
+data_train['Year'] = replace_values(data_train, 'Year', Year).astype(np.int8)
 data_train['Month'] = data_train['Date'].apply(lambda x: int(str(x)[5:7]))
 data_train['WeekOfMonth'] = data_train['Date'].apply(lambda x: int(week_of_month(x)))
-data_test['Year'] = data_test['Date'].apply(lambda x: int(str(x)[:4]))
+data_test['Year'] = data_test['Date'].apply(lambda x: str(x)[:4])
 data_test['Month'] = data_test['Date'].apply(lambda x: int(str(x)[5:7]))
 data_test['WeekOfMonth'] = data_test['Date'].apply(lambda x: int(week_of_month(x)))
+data_test['Year'] = replace_values(data_test, 'Year', Year).astype(np.int8)
+
+print data_train['Year'].unique()
+print data_test['Year'].unique()
 
 print('Create ultimate data')
 # this is concatenating datasets including info from stores
