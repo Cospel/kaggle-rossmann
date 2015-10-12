@@ -5,6 +5,17 @@ import random
 
 columns = ['Store', 'DayOfWeek', 'Open', 'Promo', 'StateHoliday', 'SchoolHoliday', 'Month', 'Assortment', 'StoreType', 'WeekOfMonth','Year']
 
+def ToWeight(y):
+    w = np.zeros(y.shape, dtype=float)
+    ind = y != 0
+    w[ind] = 1./(y[ind]**2)
+    return w
+
+def RMSPE(y, yhat):
+    w = ToWeight(y)
+    rmspe = np.sqrt(np.mean( w * (y - yhat)**2 ))
+    return rmspe
+
 def get_training_dataset_simple(datam):
     """
     @param datam: pandas dataframe

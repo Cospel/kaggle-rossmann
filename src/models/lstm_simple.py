@@ -58,7 +58,7 @@ for epoch in range(10):
         print ('Epoch:', epoch,' Store:', store)
         data = DataTr[DataTr.Store == store]
         # get max 10 day sequence window
-        x, y = get_data_sequence(data,n_prev=random.randint(1, 8))
+        x, y = get_data_sequence(data,n_prev=7)
         print ('Evaluation loss before:', model.evaluate(x,y,verbose=2))
         model.fit(x, y, validation_split=0.00, batch_size=4,shuffle=True,nb_epoch=2,verbose=2)
         model.save_weights('lstm_simple_weights', overwrite=True)
