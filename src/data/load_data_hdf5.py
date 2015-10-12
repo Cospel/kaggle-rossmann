@@ -61,7 +61,7 @@ data_store = load_data_file(data_dir + 'store.csv',
                             {'Store':np.int32,
                              'StoreType':np.object,
                              'Assortment':np.object,
-                             'CompetitionDistance':np.object,
+                             'CompetitionDistance':np.float32,
                              'CompetitionOpenSiceMonth':np.object, # categorical
                              'CompetitionOpenSiceYear':np.object,
                              'Promo2':np.int8,
@@ -76,6 +76,13 @@ data_store['StoreType'] = replace_values(data_store,'StoreType', StoreType).asty
 data_test['StateHoliday'] = replace_values(data_test,'StateHoliday', StateHoliday).astype(np.int8)
 data_test.loc[data_test.Open.isnull(), 'Open'] = 1
 data_test['Open'] = data_test['Open'].astype(np.int8)
+
+print('Missing values handling ...')
+# mean or max
+maxCompetitionDistance = max(data_store['CompetitionDistance'].tolist())
+meanCompetitionDistance = np.mean(data_store.CompetitionDistance)
+data_store['CompetitionDistance'] = data_store['CompetitionDistance'].fillna(meanCompetitionDistance)
+data_store['CompetitionDistance'] = data_store['CompetitionDistance'].astype(np.int32)
 
 print('Add some more features ...')
 # we have dayofweek already

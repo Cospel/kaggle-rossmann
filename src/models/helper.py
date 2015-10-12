@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import random
 
-columns = ['Store', 'DayOfWeek', 'Open', 'Promo', 'StateHoliday', 'SchoolHoliday', 'Month', 'Assortment', 'StoreType', 'WeekOfMonth','Year']
+columns = ['Store', 'CompetitionDistance', 'DayOfWeek', 'Promo2', 'Open', 'Promo', 'StateHoliday', 'SchoolHoliday', 'Month', 'Assortment', 'StoreType', 'WeekOfMonth','Year']
 
 def ToWeight(y):
     w = np.zeros(y.shape, dtype=float)

@@ -27,7 +27,7 @@ data_train['Date'] = pd.to_datetime(data_train.Date)
 data_train = data_train.ix[pd.to_datetime(data_train.Date).order().index]
 (DataTr, DataTe) = train_test_split(data_train,0.00)
 
-in_neurons = 11
+in_neurons = 12
 hidden_neurons = 250
 hidden_neurons_2 = 300
 out_neurons = 1

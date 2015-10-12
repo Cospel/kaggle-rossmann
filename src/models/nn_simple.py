@@ -24,7 +24,7 @@ data_test = hdf['data_test']
 data_test.sort_index(by=['Id'],ascending=[True])
 (DataTr, DataTe) = train_test_split(data_train,0.00)
 
-in_neurons = 10
+in_neurons = 12
 hidden_neurons = 100
 out_neurons = 1
 nb_epoch = 10

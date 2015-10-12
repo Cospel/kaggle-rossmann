@@ -24,12 +24,17 @@ print ('Getting data ...')
 X_train, Y_train = get_training_dataset_simple(DataTr)
 
 print ('Fitting model ...')
-model = RandomForestRegressor(max_depth=35,n_estimators=30)
+model = RandomForestRegressor(max_depth=40,n_estimators=50)
 model.fit(X_train,Y_train)
 
 print ('Evaluating test ...')
+Y_pred = model.predict(X_train)
+print ('Eval loss train rmspe:',RMSPE(Y_train,Y_pred))
+
+print('Now eval test ...')
 X_train, Y_train = None, None
 X_test = get_test_dataset_simple(data_test)
 predicted_values = model.predict(X_test)
 data_result = pd.DataFrame({'Sales': predicted_values.astype(int).flatten(), 'Id': data_test['Id'].tolist()})
 store_results(data_result, 'test_output.csv')
+print ('Done')
