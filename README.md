@@ -1,9 +1,11 @@
-# kaggle-rossmann by Cospel
+# kaggle-rossmann competition
 Prediction model for Kaggle/Rossmann competition.
 Contact me on my linkedin if you need more information.
 
 You can find out more about this competition at:
 https://www.kaggle.com/c/rossmann-store-sales
+
+https://www.kaggle.com/
 
 # steps
 0. clone repo
@@ -12,10 +14,10 @@ https://www.kaggle.com/c/rossmann-store-sales
 3. run the model from models directory for training
 
 # folders
-/data            : datasets
+/data                      : datasets
 
-/src/data        : handling dataset, missing values mostly with pandas
+/src/data                  : handling dataset, missing values mostly with pandas
 
-/src/models      : models for prediction
+/src/models                : models for prediction
 
-/src/eval        : evaluations
+/src/models/results        : results
