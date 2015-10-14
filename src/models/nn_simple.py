@@ -16,6 +16,16 @@ import random
 
 from helper import *
 
+# which columns we will use for model
+columns = ['Store', 'CompetitionDistance', 'Promo2', 'Open', 'Promo',
+           'StateHoliday_a','StateHoliday_b', 'StateHoliday_c','StateHoliday_0',
+           'Assortment_a','Assortment_b','Assortment_c','Assortment_nan',
+           'StoreType_a','StoreType_b','StoreType_c','StoreType_d','StoreType_nan',
+           'DayOfWeek_1.0','DayOfWeek_2.0','DayOfWeek_3.0','DayOfWeek_4.0','DayOfWeek_5.0','DayOfWeek_6.0','DayOfWeek_7.0',
+           'WeekOfMonth_1.0','WeekOfMonth_2.0','WeekOfMonth_3.0','WeekOfMonth_4.0','WeekOfMonth_5.0','WeekOfMonth_6.0',
+           'Month_1.0','Month_2.0','Month_3.0','Month_4.0','Month_5.0','Month_6.0','Month_7.0','Month_8.0','Month_9.0','Month_10.0','Month_11.0','Month_12.0',
+           'SchoolHoliday']
+
 print('Loading data ...')
 data_dir = '../../data/'
 hdf = HDFStore(data_dir + 'data.h5')
@@ -24,8 +34,10 @@ data_test = hdf['data_test']
 data_test.sort_index(by=['Id'],ascending=[True])
 (DataTr, DataTe) = train_test_split(data_train,0.00)
 
-in_neurons = 12
-hidden_neurons = 100
+print('Number of input neurons...', len(columns))
+in_neurons = len(columns)
+hidden_neurons = 400
+hidden_neurons_2 = 150
 out_neurons = 1
 nb_epoch = 10
 evaluation = []
@@ -38,7 +50,8 @@ model.add(Dense(hidden_neurons, out_neurons, init='uniform'))
 model.compile(loss='mean_squared_error', optimizer='rmsprop')
 
 print ('Getting data ...')
-X_train, Y_train = get_training_dataset_simple(DataTr)
+X_train, Y_train = get_training_dataset_simple(DataTr,columns)
+X_test = get_test_dataset_simple(data_test,columns)
 
 print ('Fitting model ...')
 for k in range(3):
@@ -48,7 +61,6 @@ for k in range(3):
 
 print ('Evaluating test ...')
 X_train, Y_train = None, None
-X_test = get_test_dataset_simple(data_test)
 predicted_values = model.predict(X_test)
 data_result = pd.DataFrame({'Sales': predicted_values.astype(int).flatten(), 'Id': data_test['Id'].tolist()})
 store_results(data_result, 'test_output.csv')

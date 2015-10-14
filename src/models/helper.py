@@ -3,8 +3,6 @@ import pandas as pd
 import numpy as np
 import random
 
-columns = ['Store', 'CompetitionDistance', 'DayOfWeek', 'Promo2', 'Open', 'Promo', 'StateHoliday', 'SchoolHoliday', 'Month', 'Assortment', 'StoreType', 'WeekOfMonth','Year']
-
 def ToWeight(y):
     w = np.zeros(y.shape, dtype=float)
     ind = y != 0
@@ -16,7 +14,7 @@ def RMSPE(y, yhat):
     rmspe = np.sqrt(np.mean( w * (y - yhat)**2 ))
     return rmspe
 
-def get_training_dataset_simple(datam):
+def get_training_dataset_simple(datam, columns):
     """
     @param datam: pandas dataframe
     @param n_prev: array of length of sequences
@@ -26,7 +24,7 @@ def get_training_dataset_simple(datam):
     docY = datam['Sales'].tolist()
     return docX, np.array(docY)
 
-def get_data_sequence(datam, n_prev=10):
+def get_data_sequence(datam, columns, n_prev=10):
     """
     @param datam : pandas dataframe
     @param n_prev: number of previous examples/timesteps for RNN
@@ -39,7 +37,7 @@ def get_data_sequence(datam, n_prev=10):
         docY.append(datam[['Sales']].iloc[i+n_prev])
     return np.array(docX), np.array(docY)
 
-def get_test_dataset_simple(datam):
+def get_test_dataset_simple(datam, columns):
     """
     @param datam: pandas dataframe
     @param n_prev: array of length of sequences
