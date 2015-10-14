@@ -24,7 +24,7 @@ columns = ['Store', 'CompetitionDistance', 'Promo2', 'Open', 'Promo',
            'DayOfWeek_1.0','DayOfWeek_2.0','DayOfWeek_3.0','DayOfWeek_4.0','DayOfWeek_5.0','DayOfWeek_6.0','DayOfWeek_7.0',
            'WeekOfMonth_1.0','WeekOfMonth_2.0','WeekOfMonth_3.0','WeekOfMonth_4.0','WeekOfMonth_5.0','WeekOfMonth_6.0',
            'Month_1.0','Month_2.0','Month_3.0','Month_4.0','Month_5.0','Month_6.0','Month_7.0','Month_8.0','Month_9.0','Month_10.0','Month_11.0','Month_12.0',
-           'SchoolHoliday']
+           'SchoolHoliday','Year_1.0','Year_2.0','Year_3.0']
 
 print('Loading data ...')
 data_dir = '../../data/'
