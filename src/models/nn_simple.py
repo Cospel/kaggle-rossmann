@@ -37,7 +37,7 @@ data_test.sort_index(by=['Id'],ascending=[True])
 print('Number of input neurons...', len(columns))
 in_neurons = len(columns)
 hidden_neurons = 400
-hidden_neurons_2 = 150
+hidden_neurons_2 = 100
 out_neurons = 1
 nb_epoch = 10
 evaluation = []
@@ -45,8 +45,10 @@ evaluation = []
 print ('Creating simple NN ...')
 model = Sequential()
 model.add(Dense(in_neurons, hidden_neurons, init='uniform', activation='tanh'))
-model.add(Dropout(0.5))
-model.add(Dense(hidden_neurons, out_neurons, init='uniform'))
+model.add(Dropout(0.3))
+model.add(Dense(hidden_neurons, hidden_neurons_2, init='uniform'))
+model.add(Dropout(0.2))
+model.add(Dense(hidden_neurons_2, out_neurons, init='uniform'))
 model.compile(loss='mean_squared_error', optimizer='rmsprop')
 
 print ('Getting data ...')
