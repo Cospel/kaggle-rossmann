@@ -18,6 +18,19 @@ import os.path
 
 from helper import *
 
+
+# which columns we will use for model
+
+# which columns we will use for model
+columns = ['Store', 'CompetitionDistance', 'Promo2', 'Open', 'Promo',
+           'StateHoliday_a','StateHoliday_b', 'StateHoliday_c','StateHoliday_0',
+           'Assortment_a','Assortment_b','Assortment_c','Assortment_nan',
+           'StoreType_a','StoreType_b','StoreType_c','StoreType_d','StoreType_nan',
+           'DayOfWeek_1.0','DayOfWeek_2.0','DayOfWeek_3.0','DayOfWeek_4.0','DayOfWeek_5.0','DayOfWeek_6.0','DayOfWeek_7.0',
+           'WeekOfMonth_1.0','WeekOfMonth_2.0','WeekOfMonth_3.0','WeekOfMonth_4.0','WeekOfMonth_5.0','WeekOfMonth_6.0',
+           'Month_1.0','Month_2.0','Month_3.0','Month_4.0','Month_5.0','Month_6.0','Month_7.0','Month_8.0','Month_9.0','Month_10.0','Month_11.0','Month_12.0',
+           'SchoolHoliday','Year_1.0','Year_2.0','Year_3.0']
+
 print('Loading data ...')
 data_dir = '../../data/'
 hdf = HDFStore(data_dir + 'data.h5')
@@ -32,15 +45,14 @@ stores = DataTr['Store'].unique()
 big_x = []
 big_y = []
 i = 0
-print ('Fitting model ...')
-for epoch in range(1):
-    for store in stores:
-        i++;
-        print (i)
-        data = DataTr[DataTr.Store == store]
-        x, y = get_data_sequence(data,n_prev=7)
-        big_x.apend(x)
-        big_y.apend(y)
+print ('Creating data...')
+for store in stores:
+    i = i + 1
+    print (i)
+    data = DataTr[DataTr.Store == store]
+    x, y = get_data_sequence(data,columns,n_prev=2)
+    big_x.append(x)
+    big_y.append(y)
 
 
 np.save(big_x,'big_7x.npy')
