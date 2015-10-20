@@ -1,6 +1,7 @@
 # Author: Michal Lukac, cospelthetraceur@gmail.com
 # script for geting hdf5 dataset for rossmann kaggle competition
-# You need to have pandas, numpy
+# You need to have pandas, numpy, sklearn, ...
+# Feel free to contact me!
 
 from pandas import HDFStore
 import pandas as pd
@@ -17,6 +18,11 @@ def get_mean(dft, dfs, column='Sales'):
     months = dft['Month'].unique()
     state_holidays = dft['StateHoliday'].unique()
 
+    # TODO Mean By StoreType
+    # TODO Mean By Assortment
+    # TODO Mean By WeekOfMonth
+    # TODO Mean By ...
+
     # create empty arrays
     mean_sales = []
     mean_sales_promo = []
@@ -28,6 +34,7 @@ def get_mean(dft, dfs, column='Sales'):
     # for every store we get mean value of sales(entire, DayOfWeek, Month)
     for store in stores:
         serie = dft[dft['Store'] == store]
+
         # entire data mean
         mean_sales.append(serie[column].mean())
 
