@@ -16,6 +16,10 @@ def get_mean(dft, dfs):
     days = dft['DayOfWeek'].unique()
     months = dft['Month'].unique()
 
+    # TODO Average by school and state holiday, ...
+    #              by Year
+    #              by Promo
+
     mean_visits = []
     mean_sales = []
     mean_sales_days = { k: [] for k in days }
