@@ -32,7 +32,7 @@ def get_mean(dft, dfs):
         for day in days:
             mean_sales_days[day].append(serie[serie['DayOfWeek'] == day]['Sales'].mean())
         for month in months:
-            mean_sales_days[month].append(serie[serie['Month'] == month]['Sales'].mean())
+            mean_sales_months[month].append(serie[serie['Month'] == month]['Sales'].mean())
 
     # create dataframes
     df = pd.DataFrame({'Store': stores,
@@ -43,9 +43,20 @@ def get_mean(dft, dfs):
     mean_sales_days['Store'] = stores
     df_days = pd.DataFrame(mean_sales_days)
 
-    mean_sales_months = rename_dictionary(mean_sales_month, 'MeanMonthSales')
+    mean_sales_months = rename_dictionary(mean_sales_months, 'MeanMonthSales')
     mean_sales_months['Store'] = stores
     df_months = pd.DataFrame(mean_sales_months)
+
+    # and normalize
+    min_max_scaler = preprocessing.MinMaxScaler()
+    df['MeanSales'] = min_max_scaler.fit_transform(df['MeanSales'])
+    df['MeanVisits'] = min_max_scaler.fit_transform(df['MeanVisits'])
+
+    for day in days:
+        df_days['MeanDayOfWeekSales'+str(day)] = min_max_scaler.fit_transform(df_days['MeanDayOfWeekSales'+str(day)])
+
+    for month in months:
+        df_months['MeanMonthSales'+str(month)] = min_max_scaler.fit_transform(df_months['MeanMonthSales'+str(month)])
 
     # merge everything
     return pd.merge(df, pd.merge(df_days, df_months, on='Store'), on='Store')
