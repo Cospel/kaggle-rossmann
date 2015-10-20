@@ -8,8 +8,58 @@ import numpy as np
 from math import ceil
 from sklearn import preprocessing
 
+def get_mean(dft, dfs):
+    """
+    Get features of mean for every store.
+    """
+    stores = dfs['Store'].unique()
+    days = dft['DayOfWeek'].unique()
+    months = dft['Month'].unique()
+
+    mean_visits = []
+    mean_sales = []
+    mean_sales_days = { k: [] for k in days }
+    mean_sales_months = { k: [] for k in months }
+
+    # for every store we get mean value of sales(entire, DayOfWeek, Month)
+    for store in stores:
+        serie = dft[dft['Store'] == store]
+        # entire data mean
+        mean_sales.append(serie['Sales'].mean())
+        mean_visits.append(serie['Customers'].mean())
+
+        # specific mean
+        for day in days:
+            mean_sales_days[day].append(serie[serie['DayOfWeek'] == day]['Sales'].mean())
+        for month in months:
+            mean_sales_days[month].append(serie[serie['Month'] == month]['Sales'].mean())
+
+    # create dataframes
+    df = pd.DataFrame({'Store': stores,
+                       'MeanVisits': mean_visits,
+                       'MeanSales': mean_sales})
+
+    mean_sales_days = rename_dictionary(mean_sales_days, 'MeanDayOfWeekSales')
+    mean_sales_days['Store'] = stores
+    df_days = pd.DataFrame(mean_sales_days)
+
+    mean_sales_months = rename_dictionary(mean_sales_month, 'MeanMonthSales')
+    mean_sales_months['Store'] = stores
+    df_months = pd.DataFrame(mean_sales_months)
+
+    # merge everything
+    return pd.merge(df, pd.merge(df_days, df_months, on='Store'), on='Store')
+
+def rename_dictionary(dictionary, name):
+    keys = dictionary.keys()
+    for key in keys:
+        dictionary[name+str(key)] = dictionary.pop(key)
+    return dictionary
 
 def load_data_file(filename,dtypes,parsedate = True):
+    """
+    Load file to dataframe.
+    """
     date_parse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d')
     if parsedate:
         return pd.read_csv(filename, sep=',', parse_dates=['Date'], date_parser= date_parse,dtype=dtypes)
@@ -17,7 +67,8 @@ def load_data_file(filename,dtypes,parsedate = True):
         return pd.read_csv(filename, sep=',', dtype=dtypes)
 
 def week_of_month(dt):
-    """ Returns the week of the month for the specified date.
+    """
+    Returns the week of the month for the specified date.
     """
 
     first_day = dt.replace(day=1)
@@ -28,6 +79,9 @@ def week_of_month(dt):
     return int(ceil(adjusted_dom/7.0))
 
 def replace_values(dataframe, column, dictionary):
+    """
+    Replace values of dataframe column with dictionary values.
+    """
     return dataframe[column].apply( lambda x: int(dictionary[x]) )
 
 # some known things about dataset
@@ -110,6 +164,10 @@ data_test['StateHoliday'] = replace_values(data_test,'StateHoliday', StateHolida
 data_store['Assortment'] = replace_values(data_store,'Assortment', Assortment).astype(np.int8)
 data_store['StoreType'] = replace_values(data_store,'StoreType', StoreType).astype(np.int8)
 
+# create mean dataframe
+print('Mean data frame values ...')
+data_mean =  get_mean(data_train, data_store)
+
 print('Missing values handling ...')
 # mean or max missing values
 maxCompetitionDistance = max(data_store['CompetitionDistance'].tolist())
@@ -129,8 +187,9 @@ data_store['CompetitionDistance'] = min_max_scaler.fit_transform(data_store['Com
 
 print('Create ultimate data')
 # this is concatenating datasets including info from stores
-data_ut_train = pd.merge(data_train,data_store, on='Store')
-data_ut_test  = pd.merge(data_test,data_store, on='Store')
+data_ut_store = pd.merge(data_mean, data_store, on='Store')
+data_ut_train = pd.merge(data_train,data_ut_store, on='Store')
+data_ut_test  = pd.merge(data_test,data_ut_store, on='Store')
 
 print data_ut_train[0:1]
 print ('...')
@@ -144,6 +203,6 @@ print('Storing data ...')
 hdf = HDFStore(data_dir + 'data.h5')
 hdf.put('data_train', data_ut_train, format='table', data_columns=True)
 hdf.put('data_test', data_ut_test, format='table', data_columns=True)
-hdf.put('data_store', data_store, format='table', data_columns=True)
+hdf.put('data_store', data_ut_store, format='table', data_columns=True)
 
 print('Done ...')
