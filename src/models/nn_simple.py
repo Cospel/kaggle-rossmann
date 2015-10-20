@@ -1,5 +1,5 @@
 # Author: Michal Lukac, cospelthetraceur@gmail.com
-# script for training RNN for rossmann
+# script for training NN for rossmann
 # You need to have pandas, numpy, scipy and keras
 
 from keras.preprocessing import sequence
@@ -18,12 +18,18 @@ from helper import *
 
 # which columns we will use for model
 columns = ['Store', 'CompetitionDistance', 'Promo2', 'Open', 'Promo',
-           'StateHoliday_a','StateHoliday_b', 'StateHoliday_c','StateHoliday_0',
-           'Assortment_a','Assortment_b','Assortment_c','Assortment_nan',
-           'StoreType_a','StoreType_b','StoreType_c','StoreType_d','StoreType_nan',
-           'DayOfWeek_1.0','DayOfWeek_2.0','DayOfWeek_3.0','DayOfWeek_4.0','DayOfWeek_5.0','DayOfWeek_6.0','DayOfWeek_7.0',
-           'WeekOfMonth_1.0','WeekOfMonth_2.0','WeekOfMonth_3.0','WeekOfMonth_4.0','WeekOfMonth_5.0','WeekOfMonth_6.0',
-           'Month_1.0','Month_2.0','Month_3.0','Month_4.0','Month_5.0','Month_6.0','Month_7.0','Month_8.0','Month_9.0','Month_10.0','Month_11.0','Month_12.0', 'SchoolHoliday','Year_1.0','Year_2.0','Year_3.0','MeanSales', 'MeanVisits', 'MeanDayOfWeekSales1', 'MeanDayOfWeekSales2', 'MeanDayOfWeekSales3', 'MeanDayOfWeekSales4', 'MeanDayOfWeekSales5', 'MeanDayOfWeekSales6', 'MeanDayOfWeekSales7', 'MeanMonthSales1', 'MeanMonthSales10', 'MeanMonthSales11', 'MeanMonthSales12', 'MeanMonthSales2', 'MeanMonthSales3', 'MeanMonthSales4', 'MeanMonthSales5', 'MeanMonthSales6', 'MeanMonthSales7', 'MeanMonthSales8', 'MeanMonthSales9']
+'StateHoliday_a','StateHoliday_b', 'StateHoliday_c','StateHoliday_0',
+'Assortment_a','Assortment_b','Assortment_c','Assortment_nan',
+'StoreType_a','StoreType_b','StoreType_c','StoreType_d','StoreType_nan',
+'DayOfWeek_1.0','DayOfWeek_2.0','DayOfWeek_3.0','DayOfWeek_4.0','DayOfWeek_5.0','DayOfWeek_6.0','DayOfWeek_7.0',
+'WeekOfMonth_1.0','WeekOfMonth_2.0','WeekOfMonth_3.0','WeekOfMonth_4.0','WeekOfMonth_5.0','WeekOfMonth_6.0',
+'Month_1.0','Month_2.0','Month_3.0','Month_4.0','Month_5.0','Month_6.0','Month_7.0','Month_8.0','Month_9.0',
+'Month_10.0','Month_11.0','Month_12.0', 'SchoolHoliday','Year_1.0','Year_2.0','Year_3.0','MeanSales',
+'MeanVisits', 'MeanDayOfWeekSales1', 'MeanDayOfWeekSales2', 'MeanDayOfWeekSales3', 'MeanDayOfWeekSales4',
+'MeanDayOfWeekSales5', 'MeanDayOfWeekSales6', 'MeanDayOfWeekSales7', 'MeanMonthSales1', 'MeanMonthSales10',
+'MeanMonthSales11', 'MeanMonthSales12', 'MeanMonthSales2', 'MeanMonthSales3', 'MeanMonthSales4',
+'MeanMonthSales5', 'MeanMonthSales6', 'MeanMonthSales7', 'MeanMonthSales8', 'MeanMonthSales9',
+'MeanSalesNotPromo','MeanSalesPromo','MeanHolidaySales0','MeanHolidaySales1','MeanHolidaySales2','MeanHolidaySales3']
 
 print('Loading data ...')
 data_dir = '../../data/'
@@ -63,5 +69,9 @@ for k in range(3):
 print ('Evaluating test ...')
 X_train, Y_train = None, None
 predicted_values = model.predict(X_test)
-data_result = pd.DataFrame({'Sales': predicted_values.astype(int).flatten(), 'Id': data_test['Id'].tolist()})
+
+# lets remove negative values
+predicted_values = [0 if i < 0 else i for i in predicted_values.astype(int).flatten()]
+
+data_result = pd.DataFrame({'Sales': predicted_values, 'Id': data_test['Id'].tolist()})
 store_results(data_result, 'test_output.csv')
