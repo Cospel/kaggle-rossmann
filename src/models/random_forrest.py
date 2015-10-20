@@ -13,7 +13,7 @@ import random
 from helper import *
 
 # which columns we will use for model
-columns = ['Store', 'CompetitionDistance', 'DayOfWeek', 'Promo2', 'Open', 'Promo', 'StateHoliday', 'SchoolHoliday', 'Month', 'Assortment', 'StoreType', 'WeekOfMonth','Year']
+columns = ['Store', 'CompetitionDistance', 'DayOfWeek', 'Promo2', 'Open', 'Promo', 'StateHoliday', 'SchoolHoliday', 'Month', 'Assortment', 'StoreType', 'WeekOfMonth','Year','MeanVisits','MeanSales','MeanDayOfWeekSales1','MeanDayOfWeekSales2','MeanDayOfWeekSales3','MeanDayOfWeekSales4','MeanDayOfWeekSales5','MeanDayOfWeekSales6','MeanDayOfWeekSales7', 'MeanMonthSales1','MeanMonthSales2','MeanMonthSales3','MeanMonthSales4','MeanMonthSales5','MeanMonthSales6','MeanMonthSales7','MeanMonthSales8','MeanMonthSales9','MeanMonthSales10','MeanMonthSales11','MeanMonthSales12']
 
 print('Loading data ...')
 data_dir = '../../data/'
@@ -22,14 +22,14 @@ data_train = hdf['data_train']
 data_test = hdf['data_test']
 data_test.sort_index(by=['Id'],ascending=[True])
 (DataTr, DataTe) = train_test_split(data_train,0.00)
-
+print DataTr.columns.values
 print ('Getting data ...')
 X_train, Y_train = get_training_dataset_simple(DataTr,columns)
 
 print ('Shape:', X_train.shape)
 
 print ('Fitting model ...')
-model = RandomForestRegressor(max_depth=40,n_estimators=45)
+model = RandomForestRegressor(max_depth=55,n_estimators=45)
 model.fit(X_train,Y_train)
 
 print ('Evaluating test ...')
