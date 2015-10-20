@@ -8,64 +8,83 @@ import numpy as np
 from math import ceil
 from sklearn import preprocessing
 
-def get_mean(dft, dfs):
+def get_mean(dft, dfs, column='Sales'):
     """
     Get features of mean for every store.
     """
     stores = dfs['Store'].unique()
     days = dft['DayOfWeek'].unique()
     months = dft['Month'].unique()
+    state_holidays = dft['StateHoliday'].unique()
 
-    # TODO Average by school and state holiday, ...
-    #              by Year
-    #              by Promo
-
-    mean_visits = []
+    # create empty arrays
     mean_sales = []
+    mean_sales_promo = []
+    mean_sales_not_promo = []
     mean_sales_days = { k: [] for k in days }
     mean_sales_months = { k: [] for k in months }
+    mean_sales_holiday = { k: [] for k in state_holidays }
 
     # for every store we get mean value of sales(entire, DayOfWeek, Month)
     for store in stores:
         serie = dft[dft['Store'] == store]
         # entire data mean
-        mean_sales.append(serie['Sales'].mean())
-        mean_visits.append(serie['Customers'].mean())
+        mean_sales.append(serie[column].mean())
 
-        # specific mean
+        # mean sales by promo
+        mean_sales_promo.append(serie[serie['Promo'] == 1][column].mean())
+        mean_sales_not_promo.append(serie[serie['Promo'] == 0][column].mean())
+
+        # specific mean by datetime, holidays
         for day in days:
-            mean_sales_days[day].append(serie[serie['DayOfWeek'] == day]['Sales'].mean())
+            mean_sales_days[day].append(serie[serie['DayOfWeek'] == day][column].mean())
         for month in months:
-            mean_sales_months[month].append(serie[serie['Month'] == month]['Sales'].mean())
+            mean_sales_months[month].append(serie[serie['Month'] == month][column].mean())
+        for holiday in state_holidays:
+            mean_sales_holiday[holiday].append(serie[serie['StateHoliday'] == holiday][column].mean())
 
     # create dataframes
-    df = pd.DataFrame({'Store': stores,
-                       'MeanVisits': mean_visits,
-                       'MeanSales': mean_sales})
+    df = pd.DataFrame({'Store':                       stores,
+                       'Mean' + column:               mean_sales,
+                       'Mean' + column + 'Promo' :    mean_sales_promo,
+                       'Mean' + column + 'NotPromo' : mean_sales_not_promo})
 
-    mean_sales_days = rename_dictionary(mean_sales_days, 'MeanDayOfWeekSales')
+    # we need to rename_dictionary 1 => MeanDayOfWeek1
+    mean_sales_days = rename_dictionary(mean_sales_days, 'MeanDayOfWeek' + column)
     mean_sales_days['Store'] = stores
     df_days = pd.DataFrame(mean_sales_days)
 
-    mean_sales_months = rename_dictionary(mean_sales_months, 'MeanMonthSales')
+    mean_sales_months = rename_dictionary(mean_sales_months, 'MeanMonth' + column)
     mean_sales_months['Store'] = stores
     df_months = pd.DataFrame(mean_sales_months)
 
+    mean_sales_holiday = rename_dictionary(mean_sales_holiday, 'MeanHoliday' + column)
+    mean_sales_holiday['Store'] = stores
+    df_holidays = pd.DataFrame(mean_sales_holiday)
+
     # and normalize
     min_max_scaler = preprocessing.MinMaxScaler()
-    df['MeanSales'] = min_max_scaler.fit_transform(df['MeanSales'])
-    df['MeanVisits'] = min_max_scaler.fit_transform(df['MeanVisits'])
+    df['Mean' + column] = min_max_scaler.fit_transform(df['Mean' + column])
+    df['Mean' + column + 'Promo'] = min_max_scaler.fit_transform(df['Mean' + column + 'Promo'])
+    df['Mean' + column + 'NotPromo'] = min_max_scaler.fit_transform(df['Mean' + column + 'NotPromo'])
 
     for day in days:
-        df_days['MeanDayOfWeekSales'+str(day)] = min_max_scaler.fit_transform(df_days['MeanDayOfWeekSales'+str(day)])
+        df_days['MeanDayOfWeek'+ column + str(day)] = min_max_scaler.fit_transform(df_days['MeanDayOfWeek' + column + str(day)])
 
     for month in months:
-        df_months['MeanMonthSales'+str(month)] = min_max_scaler.fit_transform(df_months['MeanMonthSales'+str(month)])
+        df_months['MeanMonth' + column + str(month)] = min_max_scaler.fit_transform(df_months['MeanMonth' + column + str(month)])
 
-    # merge everything
-    return pd.merge(df, pd.merge(df_days, df_months, on='Store'), on='Store')
+    for holiday in state_holidays:
+        df_holidays['MeanHoliday' + column + str(holiday)] = min_max_scaler.fit_transform(df_holidays['MeanHoliday' + column + str(holiday)])
+
+    # merge everything together on Store
+    return pd.merge(df, pd.merge(df_days, pd.merge(df_holidays, df_months, on='Store'), on='Store'), on='Store')
 
 def rename_dictionary(dictionary, name):
+    """
+    Rename dictionary because dictionary of mean values for month is like { [1-12]: mean }
+    and we need { [1-12]MonthMean: mean }
+    """
     keys = dictionary.keys()
     for key in keys:
         dictionary[name+str(key)] = dictionary.pop(key)
@@ -181,7 +200,9 @@ data_store['StoreType'] = replace_values(data_store,'StoreType', StoreType).asty
 
 # create mean dataframe
 print('Mean data frame values ...')
-data_mean =  get_mean(data_train, data_store)
+data_mean1 = get_mean(data_train, data_store, 'Sales')
+data_mean2 = get_mean(data_train, data_store, 'Customers')
+data_mean = pd.merge(data_mean1, data_mean2, on='Store')
 
 print('Missing values handling ...')
 # mean or max missing values
@@ -201,15 +222,10 @@ min_max_scaler = preprocessing.MinMaxScaler()
 data_store['CompetitionDistance'] = min_max_scaler.fit_transform(data_store['CompetitionDistance'])
 
 print('Create ultimate data')
-# this is concatenating datasets including info from stores
+# this is concatenating datasets including info from stores and mean
 data_ut_store = pd.merge(data_mean, data_store, on='Store')
 data_ut_train = pd.merge(data_train,data_ut_store, on='Store')
 data_ut_test  = pd.merge(data_test,data_ut_store, on='Store')
-
-print data_ut_train[0:1]
-print ('...')
-print data_store[0:1]
-print ('...')
 
 assert( len( data_ut_train ) == len( data_train ))
 assert( len( data_ut_test ) == len( data_test ))
