@@ -38,8 +38,8 @@ data_train = data_train.ix[pd.to_datetime(data_train.Date).order().index]
 (DataTr, DataTe) = train_test_split(data_train,0.00)
 
 in_neurons = len(columns)
-hidden_neurons = 300
-hidden_neurons_2 = 300
+hidden_neurons = 500
+hidden_neurons_2 = 500
 out_neurons = 1
 nb_epoch = 10
 evaluation = []
@@ -47,32 +47,35 @@ evaluation = []
 print ('Creating simple DLSTM ...')
 model = Sequential()
 model.add(LSTM(in_neurons, hidden_neurons, return_sequences=True))
+#model.add(Dropout(0.3))
+#model.add(LSTM(hidden_neurons, hidden_neurons_2, return_sequences=False))
 model.add(Dropout(0.3))
-model.add(LSTM(hidden_neurons, hidden_neurons_2, return_sequences=False))
-model.add(Dropout(0.3))
-model.add(Dense(hidden_neurons_2, out_neurons, init='uniform'))
+model.add(Dense(hidden_neurons, out_neurons, init='uniform'))
 model.compile(loss='mean_squared_error', optimizer='rmsprop')
 
 # if we have some store model continue with that
-if os.path.exists('lstm_simple_weights'):
-    print ('Continue with saved model ...')
-    model.load_weights('lstm_simple_weights')
+#if os.path.exists('lstm_simple_weights'):
+#    print ('Continue with saved model ...')
+#    model.load_weights('lstm_simple_weights')
 
 print ('Getting data ...')
 stores = DataTr['Store'].unique()
 
+x = np.concatenate(np.load('big7x.npy'))
+y = np.concatenate(np.load('big7y.npy'))
+
 print ('Fitting model ...')
-for epoch in range(10):
-    shuffle(stores)
-    for store in stores:
-        print ('Epoch:', epoch,' Store:', store)
-        data = DataTr[DataTr.Store == store]
-        # get max 10 day sequence window
-        x, y = get_data_sequence(data,columns,n_prev=7)
-        print ('Evaluation loss before:', model.evaluate(x,y,verbose=2))
-        model.fit(x, y, validation_split=0.00, batch_size=4,shuffle=True,nb_epoch=2,verbose=2)
-        model.save_weights('lstm_simple_weights', overwrite=True)
-        print ('---------')
+#print (model.predict(x))
+print model.evaluate(x,y,verbose=0)
+model.fit(x, y, validation_split=0.05, batch_size=50,shuffle=True,nb_epoch=10,verbose=2)
+#model.save_weights('lstm_simple_weights', overwrite=True)
+
+yk = model.predict(x).flatten()
+y = y.flatten()
+print(yk)
+print(y)
+print RMSPE(y,yk)
+print ('---------')
 
 
 print ('Done ...')
