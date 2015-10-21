@@ -1,5 +1,5 @@
 # Author: Michal Lukac, cospelthetraceur@gmail.com
-# script for training RNN for rossmann
+# create sequence data for RNN for rossmann
 # You need to have pandas, numpy, scipy and keras
 
 from keras.preprocessing import sequence
