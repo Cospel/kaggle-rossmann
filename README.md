@@ -12,6 +12,7 @@ https://www.kaggle.com/
 1. install python, pandas, numpy, scipy/scikit, keras, hdf5, ...
 2. run the ./load_data_hdf5.py in src/data directory
 3. run the model from models directory for training
+4. if you want to experiment with lstm then you need to run create_data.py
 
 # folders
 /data                      : datasets
