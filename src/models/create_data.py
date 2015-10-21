@@ -53,12 +53,12 @@ for store in stores:
     i = i + 1
     print (i)
     data = DataTr[DataTr.Store == store]
-    x, y = get_data_sequence(data,columns,n_prev=5)
+    x, y = get_data_sequence(data,columns,n_prev=7)
     big_x.append(x)
     big_y.append(y)
 
 
-np.save('big5x',np.array(big_x))
-np.save('big5y',np.array(big_y))
+np.save('bigx',np.array(big_x))
+np.save('bigy',np.array(big_y))
 
 print ('Done ...')
