@@ -46,7 +46,7 @@ X, Y = get_training_dataset_simple(DataTr,columns)
 Xtest = get_test_dataset_simple(data_test,columns)
 
 in_neurons = len(columns)
-hidden_neurons = 800
+hidden_neurons = 300
 hidden_neurons_2 = 250
 hidden_neurons_3 = 75
 out_neurons = 1
@@ -60,25 +60,31 @@ decoder = containers.Sequential([Dense(hidden_neurons, in_neurons, activation='t
 ae = Sequential()
 ae.add(AutoEncoder(encoder=encoder, decoder=decoder, output_reconstruction=False))
 ae.compile(loss='mean_squared_error', optimizer='rmsprop')
-ae.fit(X, X, verbose=2, nb_epoch = 4)
+ae.fit(X, X, verbose=1, nb_epoch = 4)
+ae.fit(Xtest, Xtest, verbose=1, nb_epoch = 2)
 
 # lets create second autoencoder
 X2 = ae.predict(X)
+X2test = ae.predict(Xtest)
+
 encoder2 = containers.Sequential([Dense(hidden_neurons, hidden_neurons_2, activation='tanh')])
 decoder2 = containers.Sequential([Dense(hidden_neurons_2, hidden_neurons, activation='tanh')])
 ae2 = Sequential()
 ae2.add(AutoEncoder(encoder=encoder2, decoder=decoder2, output_reconstruction=False))
 ae2.compile(loss='mean_squared_error', optimizer='rmsprop')
-ae2.fit(X2,X2, verbose=2, nb_epoch = 4)
+ae2.fit(X2,X2, verbose=1, nb_epoch = 4)
+ae2.fit(X2test,X2test, verbose=1, nb_epoch = 2)
 
 # lets create third autoencoder
 X3 = ae2.predict(X2)
+X3test = ae2.predict(X2test)
 encoder3 = containers.Sequential([Dense(hidden_neurons_2, hidden_neurons_3, activation='tanh')])
 decoder3 = containers.Sequential([Dense(hidden_neurons_3, hidden_neurons_2, activation='tanh')])
 ae3 = Sequential()
 ae3.add(AutoEncoder(encoder=encoder3, decoder=decoder3, output_reconstruction=False))
 ae3.compile(loss='mean_squared_error', optimizer='rmsprop')
-ae3.fit(X3,X3, verbose=2, nb_epoch = 4)
+ae3.fit(X3,X3, verbose=1, nb_epoch = 4)
+ae3.fit(X3test,X3test, verbose=1, nb_epoch = 2)
 
 print ('Creating nn model ...')
 model = Sequential()
@@ -89,19 +95,13 @@ model.add(Dropout(0.2))
 model.add(Dense(hidden_neurons_3, out_neurons, init='uniform'))
 model.compile(loss='mean_squared_error', optimizer='rmsprop')
 
-print ('Getting data ...')
-X_train, Y_train = get_training_dataset_simple(DataTr,columns)
-X_test = get_test_dataset_simple(data_test,columns)
-
 print ('Fitting model ...')
 for k in range(1):
     print(k)
-    model.fit(X_train, Y_train, validation_split=0.05, batch_size=15,shuffle=True,nb_epoch=nb_epoch,verbose=2)
-    print model.predict(X_train)
+    model.fit(X, Y, validation_split=0.05, batch_size=20,shuffle=True,nb_epoch=nb_epoch,verbose=1)
 
 print ('Evaluating test ...')
-X_train, Y_train = None, None
-predicted_values = model.predict(X_test)
+predicted_values = model.predict(Xtest)
 
 # lets remove negative values
 predicted_values = [0 if i < 0 else i for i in predicted_values.astype(int).flatten()]

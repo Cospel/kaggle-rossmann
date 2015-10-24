@@ -9,7 +9,7 @@ import numpy as np
 from math import ceil
 from sklearn import preprocessing
 
-def get_mean(dft, dfs, column='Sales'):
+def get_mean_dataframe(dft, dfs, column='Sales'):
     """
     Get features of mean for every store.
     """
@@ -206,10 +206,15 @@ data_store['Assortment'] = replace_values(data_store,'Assortment', Assortment).a
 data_store['StoreType'] = replace_values(data_store,'StoreType', StoreType).astype(np.int8)
 
 # create mean dataframe
-print('Mean data frame values ...')
-data_mean1 = get_mean(data_train, data_store, 'Sales')
-data_mean2 = get_mean(data_train, data_store, 'Customers')
+print('Mean data frame features ...')
+data_mean1 = get_mean_dataframe(data_train, data_store, 'Sales')
+data_mean2 = get_mean_dataframe(data_train, data_store, 'Customers')
 data_mean = pd.merge(data_mean1, data_mean2, on='Store')
+
+# TODO MORE FEATURES:
+# TODO NUMBER OF PROMOS PER YEAR, ALL, PER MONTH
+# TODO SALES THROUG PROMOS
+# TODO USE PROMOINTERVAL
 
 print('Missing values handling ...')
 # mean or max missing values
