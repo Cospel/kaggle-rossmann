@@ -32,23 +32,13 @@ evaluation = []
 
 print ('Creating simple DLSTM ...')
 model = Sequential()
-model.add(LSTM(in_neurons, hidden_neurons, return_sequences=False))
-#model.add(Dropout(0.3))
-#model.add(LSTM(hidden_neurons, hidden_neurons_2, return_sequences=False))
+model.add(LSTM(hidden_neurons, input_dim=hidden_neurons, return_sequences=False))
 model.add(Dropout(0.3))
-model.add(Dense(hidden_neurons, out_neurons))
+model.add(Dense(out_neurons, input_dim=hidden_neurons))
 model.compile(loss='mean_squared_error', optimizer='rmsprop')
 
 print ('Fitting model ...')
 print model.evaluate(x,y,verbose=0)
 model.fit(x, y, validation_split=0.05, batch_size=50,shuffle=True,nb_epoch=10,verbose=2)
-
-yk = model.predict(x).flatten()
-y = y.flatten()
-print RMSPE(y,yk)
-print ('---------')
-
-# TODO Evaluation of TEST
-# ...
 
 print ('Done ...')

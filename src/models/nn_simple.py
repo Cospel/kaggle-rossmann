@@ -2,14 +2,12 @@
 # script for training NN for rossmann
 # You need to have pandas, numpy, scipy and keras
 
-from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation, Dropout
 from keras.layers.recurrent import LSTM
 from keras.optimizers import SGD, Adagrad, Adadelta, RMSprop, Adam
 
 from pandas import HDFStore
-import cPickle
 import pandas as pd
 import numpy as np
 import random
@@ -49,11 +47,11 @@ evaluation = []
 
 print ('Creating simple NN ...')
 model = Sequential()
-model.add(Dense(in_neurons, hidden_neurons, init='uniform', activation='tanh'))
+model.add(Dense(hidden_neurons, input_dim=in_neurons, init='uniform', activation='tanh'))
 model.add(Dropout(0.3))
-model.add(Dense(hidden_neurons, hidden_neurons_2, init='uniform',activation='tanh'))
+model.add(Dense(hidden_neurons_2, input_dim=hidden_neurons, init='uniform',activation='tanh'))
 model.add(Dropout(0.2))
-model.add(Dense(hidden_neurons_2, out_neurons, init='uniform'))
+model.add(Dense(out_neurons, input_dim=hidden_neurons_2, init='uniform'))
 model.compile(loss='mean_squared_error', optimizer='rmsprop')
 
 print ('Getting data ...')
@@ -61,10 +59,7 @@ X_train, Y_train = get_training_dataset_simple(DataTr,columns)
 X_test = get_test_dataset_simple(data_test,columns)
 
 print ('Fitting model ...')
-for k in range(3):
-    print(k)
-    model.fit(X_train, Y_train, validation_split=0.05, batch_size=15,shuffle=True,nb_epoch=nb_epoch,verbose=1)
-    print model.predict(X_train)
+model.fit(X_train, Y_train, validation_split=0.05, batch_size=15,shuffle=True,nb_epoch=nb_epoch,verbose=1)
 
 print ('Evaluating test ...')
 X_train, Y_train = None, None
